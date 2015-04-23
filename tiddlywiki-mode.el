@@ -16,3 +16,22 @@
       (setq prop-list (plist-put prop-list :nheader (- (line-number-at-pos) 2)))
       (setq prop-list (plist-put prop-list :content (buffer-substring (point) (point-max))))
       prop-list)))
+
+(defun tiddlywiki-narrow-file ()
+  (interactive)
+  (let ((info (tiddlywiki-parse-tid-file)))
+    (goto-line (+ (plist-get info :nheader) 2))
+    (narrow-to-region (point) (point-max))
+    (let ((ftype (plist-get info 'type)))
+      (cond ((string= ftype "text/org")
+             (message "orgmode")
+             (org-mode))
+            (t
+             (message "nothing"))))))
+
+(defun tiddlywiki-widen-file ()
+  (interactive)
+  (widen)
+  (text-mode)
+  (recenter-top-bottom))
+
