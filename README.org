@@ -1,0 +1,5 @@
+* running
+
+  tiddlywiki $DIRNAME --server $PORTNUMBER [default 8080]
+
+  
