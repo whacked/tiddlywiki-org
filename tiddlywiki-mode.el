@@ -8,7 +8,8 @@
       (while in-header
         (if (looking-at "^\\([^:]+\\):[[:space:]]+?\\(.+\\)$")
             ;; in header
-            (setq prop-list (plist-put prop-list (match-string 1) (match-string 2)))
+            (setq prop-list (plist-put prop-list (intern (match-string 1))
+                                       (match-string 2)))
           ;; end read header
           (setq in-header nil))
         (forward-line))
