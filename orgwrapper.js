@@ -24,7 +24,7 @@ function transformNodes(nodes) {
 function transformNode(node) {
   if($tw.utils.isArray(node)) {
     var p = 0,
-      widget = {type: "element", tag: node[p++]};
+        widget = {type: "element", tag: node[p++], attributes: {}};
     if(!$tw.utils.isArray(node[p]) && typeof(node[p]) === "object") {
       widget.attributes = {};
       $tw.utils.each(node[p++],function(value,name) {
