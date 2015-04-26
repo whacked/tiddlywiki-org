@@ -35,9 +35,16 @@ out = {
 plugin_tohtml = open(p.expanduser('~/Desktop/org-mode-parser/lib/plugin-tohtml.js')).read()
 
 tiddlers = out["tiddlers"]
-tiddlers["$:/plugins/tiddlywiki/org-mode-parser/org-mode-parser.js"]["text"] = open(p.expanduser('~/Desktop/org-mode-parser/lib/org-mode-parser.js')).read().replace('//$$$INJECT$$$', plugin_tohtml)
-tiddlers["$:/plugins/tiddlywiki/org-mode-parser/wrapper.js"]["text"] = open('orgwrapper.js').read()
-tiddlers["$:/plugins/tiddlywiki/org-mode-parser/underscore.js"]["text"] = open(p.expanduser('~/Desktop/org-mode-parser/lib/underscore-min.js')).read()
+BASE_NAMESPACE = "$:/plugins/tiddlywiki/org-mode-parser"
+tiddlers[BASE_NAMESPACE+"/org-mode-parser.js"]["text"] = open(p.expanduser('~/Desktop/org-mode-parser/lib/org-mode-parser.js')) \
+  .read() \
+  .replace('return OrgQuery;', '\n\n' + plugin_tohtml + '\n\nreturn OrgQuery;') \
+  .replace('var util=require(\'util\');', '') \
+  .replace('var fs=require("fs");', '') \
+  .replace('require("underscore");', 'require("$:/plugins/tiddlywiki/org-mode-parser/underscore.js");')
+
+tiddlers[BASE_NAMESPACE+"/wrapper.js"]["text"]         = open('orgwrapper.js').read()
+tiddlers[BASE_NAMESPACE+"/underscore.js"]["text"]      = open(p.expanduser('~/Desktop/org-mode-parser/lib/underscore-min.js')).read()
 
 HEADER = '''\
 author: %(author_name)s
