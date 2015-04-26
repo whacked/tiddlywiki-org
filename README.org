@@ -1,5 +1,10 @@
+* compile the js to .tid
+
+  python compileorg.py -save $DIRNAME
+
 * running
 
   tiddlywiki $DIRNAME --server $PORTNUMBER [default 8080]
+
 
   
