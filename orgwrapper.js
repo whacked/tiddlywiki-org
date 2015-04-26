@@ -59,7 +59,7 @@ function transformNode(node) {
 var orgRenderer = function(type,text,options) {
   var orgList = orgModeParser.parseBigString(text);
   var oq = new orgModeParser.OrgQuery(orgList);
-  this.tree = transformNodes(oq.toSimpleTree());
+  this.tree = transformNodes(oq.toTree());
 };
 
 /*
