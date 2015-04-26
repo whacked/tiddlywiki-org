@@ -44,6 +44,12 @@ function transformNode(node) {
         delete widget.attributes.src;
       }
     }
+    // Massage file: links to use local #link syntax
+    else if(widget.tag === "a") {
+      if(widget.attributes.href.value.match(/^file:/i)) {
+        widget.attributes.href.value = widget.attributes.href.value.replace(/^file:/i, "#");
+      }
+    }
     return widget;
   } else {
     return {type: "text", text: node};
