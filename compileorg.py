@@ -1,6 +1,6 @@
 import sys
 import os.path as p
-
+import datetime
 import json
 
 out = {
@@ -16,6 +16,12 @@ out = {
             "title": "$:/plugins/tiddlywiki/org-mode-parser/org-mode-parser.js",
             "module-type": "library",
         },
+        # underscore lib
+        "$:/plugins/tiddlywiki/org-mode-parser/underscore.js": {
+            "type": "application/javascript",
+            "title": "$:/plugins/tiddlywiki/org-mode-parser/underscore.js",
+            "module-type": "library",
+        },
         # interaction/glue code for TW
         "$:/plugins/tiddlywiki/org-mode-parser/wrapper.js": {
             "title": "$:/plugins/tiddlywiki/org-mode-parser/wrapper.js",
@@ -25,8 +31,28 @@ out = {
     }
 }
 
-out["$:/plugins/tiddlywiki/org-mode-parser/org-mode-parser.js"] = open(p.expanduser('~/Desktop/org-mode-parser/lib/org-mode-parser.js')).read()
-out["$:/plugins/tiddlywiki/org-mode-parser/wrapper.js"] = open('orgwrapper.js').read()
+
+plugin_tohtml = open(p.expanduser('~/Desktop/org-mode-parser/lib/plugin-tohtml.js')).read()
+
+tiddlers = out["tiddlers"]
+tiddlers["$:/plugins/tiddlywiki/org-mode-parser/org-mode-parser.js"]["text"] = open(p.expanduser('~/Desktop/org-mode-parser/lib/org-mode-parser.js')).read().replace('//$$$INJECT$$$', plugin_tohtml)
+tiddlers["$:/plugins/tiddlywiki/org-mode-parser/wrapper.js"]["text"] = open('orgwrapper.js').read()
+tiddlers["$:/plugins/tiddlywiki/org-mode-parser/underscore.js"]["text"] = open(p.expanduser('~/Desktop/org-mode-parser/lib/underscore-min.js')).read()
+
+HEADER = '''\
+author: %(author_name)s
+created: %(time_create)s
+dependents: 
+description: Org-mode plugin wrapping org-mode-parser.js
+plugin-type: plugin
+title: $:/plugins/tiddlywiki/orgmode
+type: application/json
+version: 5.1.7
+
+'''%dict(
+    author_name = 'whacked',
+    time_create = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3],
+)
 
 txt = json.dumps(out, indent=2)
 
@@ -36,8 +62,8 @@ if '-save' in sys.argv:
     # = MYDIR here
     twdir = sys.argv[sys.argv.index('-save')+1]
     with open(p.join(twdir, 'tiddlers', '$__plugins_tiddlywiki_orgmode.tid'), 'w') as ofile:
-        ofile.write(txt)
+        ofile.write(HEADER + txt)
         print('OK: wrote %s' % ofile.name)
 else:
-    print(txt)
+    print(HEADER + txt)
 
