@@ -47,7 +47,7 @@ function transformNode(node) {
     // Massage file: links to use local #link syntax
     else if(widget.tag === "a") {
       if(widget.attributes.href.value.match(/^file:/i)) {
-        widget.attributes.href.value = widget.attributes.href.value.replace(/^file:/i, "#");
+        widget.attributes.href.value = widget.attributes.href.value.replace(/^file:/i, "#").replace(/\.tid$/i, "");
       }
     }
     return widget;
