@@ -52,3 +52,31 @@
     (remove-text-properties (point-min) (plist-get info :header-end) '(read-only t face warning))
     (setq inhibit-read-only cur-inhibit-read-only)
     (set-buffer-modified-p modified)))
+
+(defun tiddlywiki-org-mode-hook ()
+  (tiddlywiki-set-header-read-only))
+
+(define-derived-mode tiddlywiki-org-mode
+  org-mode "TiddlyWiki-org"
+  "TiddlyWiki+org interaction mode"
+  (progn
+    (tiddlywiki-set-header-read-only)
+    (tiddlywiki-narrow-file)
+    ))
+
+(defun tiddlywiki-update-modified-time ()
+  (when (string= "tid" (file-name-extension (buffer-file-name)))
+    (tiddlywiki-unset-header-read-only)
+    (save-excursion
+      (beginning-of-buffer)
+      (search-forward "modified: ")
+      (kill-line)
+      (insert (format-time-string "%Y%m%d%H%M%S%3N")))
+    (tiddlywiki-set-header-read-only)))
+
+(add-hook 'org-mode-hook
+          (lambda () 
+            (add-hook 'before-save-hook 'tiddlywiki-update-modified-time nil 'make-it-local)))
+
+(add-to-list 'auto-mode-alist '("\\.org.tid\\'" . tiddlywiki-org-mode))
+
