@@ -27,6 +27,9 @@
       (cond ((string= ftype "text/org")
              (message "orgmode")
              (org-mode))
+            ((string= ftype "text/x-markdown")
+             (message "orgmode")
+             (markdown-mode))
             (t
              (message "nothing"))))))
 
