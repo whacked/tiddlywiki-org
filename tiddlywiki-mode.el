@@ -63,6 +63,7 @@
     (tiddlywiki-set-header-read-only)
     (tiddlywiki-narrow-file)
     ))
+;; (add-to-list 'auto-mode-alist '("\\.org.tid\\'" . tiddlywiki-org-mode))
 
 (defun tiddlywiki-update-modified-time ()
   (when (string= "tid" (file-name-extension (buffer-file-name)))
@@ -74,9 +75,16 @@
       (insert (format-time-string "%Y%m%d%H%M%S%3N")))
     (tiddlywiki-set-header-read-only)))
 
-(add-hook 'org-mode-hook
-          (lambda () 
-            (add-hook 'before-save-hook 'tiddlywiki-update-modified-time nil 'make-it-local)))
+(add-hook 'before-save-hook 'tiddlywiki-update-modified-time)
+;; (add-hook 'org-mode-hook
+;;           (lambda () 
+;;             (add-hook 'before-save-hook 'tiddlywiki-update-modified-time nil 'make-it-local)))
 
-(add-to-list 'auto-mode-alist '("\\.org.tid\\'" . tiddlywiki-org-mode))
-
+(define-derived-mode tiddlywiki-mode
+  fundamental-mode "TiddlyWiki"
+  "TiddlyWiki interaction mode"
+  (progn
+    (tiddlywiki-set-header-read-only)
+    (tiddlywiki-narrow-file)
+    ))
+(add-to-list 'auto-mode-alist '("\\.tid\\'" . tiddlywiki-mode))
