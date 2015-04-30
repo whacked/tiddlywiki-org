@@ -13,6 +13,7 @@
           ;; end read header
           (setq in-header nil))
         (forward-line))
+      (setq prop-list (plist-put prop-list :header-end (point)))
       (setq prop-list (plist-put prop-list :nheader (- (line-number-at-pos) 2)))
       (setq prop-list (plist-put prop-list :content (buffer-substring (point) (point-max))))
       prop-list)))
