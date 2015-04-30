@@ -1,10 +1,29 @@
-* compile the js to .tid
+* motivation
 
-  python compileorg.py -save $DIRNAME
+  interested in using [[http://tiddlywiki.com/][TiddlyWiki 5]]
 
-* running
+  it has a [[http://tiddlywiki.com/plugins/tiddlywiki/markdown/][markdown plugin]] so why not use org-mode instead?
 
-  tiddlywiki $DIRNAME --server $PORTNUMBER [default 8080]
+  better yet, why not edit org files from emacs instead, and get to
+  use TW's tags and web rendering?
 
+  *this is a roundabout hack. you have been warned*
 
+  /but it works! (well, sort of)/ :-D
+  
+* how to use
+
+  1. grab my client-side-rendering branch of [[https://github.com/whacked/org-mode-parser][org-mode-parser]]
+  2. compile the js to .tid
+     =python compileorg.py -save $DIRNAME=
+     where =$DIRNAME= is the base path of your tiddlywiki.
+     this will auto-populate a tiddler that is the org-mode plugin.
+  3. =tiddlywiki $DIRNAME --server $PORTNUMBER= [default 8080]
+
+edit your tiddlywiki as you please.
+
+* tiddlywiki-mode.el
+
+  streamlines editing of =text/org= type tiddlers in emacs
+  
   
