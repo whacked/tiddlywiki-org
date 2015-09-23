@@ -11,14 +11,15 @@
 
   /but it works! (well, sort of)/ :-D
   
-* how to use
+* how to use / install
 
-  1. grab my client-side-rendering branch of [[https://github.com/whacked/org-mode-parser][org-mode-parser]]
-  2. compile the js to .tid
+  1. generate the plugin's tiddler:
      =python compileorg.py -save $DIRNAME=
-     where =$DIRNAME= is the base path of your tiddlywiki.
+     where =$DIRNAME= is the base path (contains the tiddlywiki.info file) of your tiddlywiki.
      this will auto-populate a tiddler that is the org-mode plugin.
-  3. =tiddlywiki $DIRNAME --server $PORTNUMBER= [default 8080]
+  2. =tiddlywiki $DIRNAME --server $PORTNUMBER= [default 8080]
+
+  if you want to hack on the parser check out my client-side-rendering branch of [[https://github.com/whacked/org-mode-parser][org-mode-parser]]
 
 edit your tiddlywiki as you please.
 
