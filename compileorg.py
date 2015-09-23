@@ -11,7 +11,7 @@ UNDERSCORE_JS_PATH = 'https://raw.githubusercontent.com/jashkenas/underscore/mas
 
 def get_content(path):
     if path.startswith('http'):
-        print 'getting path', path
+        print('getting path: %s' % path)
         res = urllib2.urlopen(path)
         return res.read()
     else:
