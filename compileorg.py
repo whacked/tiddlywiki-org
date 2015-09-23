@@ -2,6 +2,25 @@ import sys
 import os.path as p
 import datetime
 import json
+import urllib2
+
+ORG_MODE_PARSER_BASEPATH = 'https://raw.githubusercontent.com/whacked/org-mode-parser/client-side-rendering'
+# ORG_MODE_PARSER_BASEPATH = p.expanduser('~/PATH/TO/local/fork')
+UNDERSCORE_JS_PATH = 'https://raw.githubusercontent.com/jashkenas/underscore/master/underscore-min.js'
+# UNDERSCORE_JS_PATH = p.join(ORG_MODE_PARSER_BASEPATH, 'lib/underscore-min.js')
+
+def get_content(path):
+    if path.startswith('http'):
+        print 'getting path', path
+        res = urllib2.urlopen(path)
+        return res.read()
+    else:
+        # assume local file
+        if not p.exists(path):
+            raise IOError('Could not locate file: %s'%path)
+        else:
+            return open(path).read()
+    raise ValueError('failed to get content for given path: %s'%path)
 
 out = {
     "tiddlers": {
@@ -32,19 +51,18 @@ out = {
 }
 
 
-plugin_tohtml = open(p.expanduser('~/Desktop/org-mode-parser/lib/plugin-tohtml.js')).read()
+plugin_tohtml = get_content(p.join(ORG_MODE_PARSER_BASEPATH, 'lib/plugin-tohtml.js'))
 
 tiddlers = out["tiddlers"]
 BASE_NAMESPACE = "$:/plugins/tiddlywiki/org-mode-parser"
-tiddlers[BASE_NAMESPACE+"/org-mode-parser.js"]["text"] = open(p.expanduser('~/Desktop/org-mode-parser/lib/org-mode-parser.js')) \
-  .read() \
+tiddlers[BASE_NAMESPACE+"/org-mode-parser.js"]["text"] = get_content(p.join(ORG_MODE_PARSER_BASEPATH, 'lib/org-mode-parser.js')) \
   .replace('return OrgQuery;', '\n\n' + plugin_tohtml + '\n\nreturn OrgQuery;') \
   .replace('var util=require(\'util\');', '') \
   .replace('var fs=require("fs");', '') \
   .replace('require("underscore");', 'require("$:/plugins/tiddlywiki/org-mode-parser/underscore.js");')
 
 tiddlers[BASE_NAMESPACE+"/wrapper.js"]["text"]         = open('orgwrapper.js').read()
-tiddlers[BASE_NAMESPACE+"/underscore.js"]["text"]      = open(p.expanduser('~/Desktop/org-mode-parser/lib/underscore-min.js')).read()
+tiddlers[BASE_NAMESPACE+"/underscore.js"]["text"]      = get_content(UNDERSCORE_JS_PATH)
 
 HEADER = '''\
 author: %(author_name)s
