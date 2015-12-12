@@ -6,6 +6,17 @@
 (defun tiddlywiki-timestamp ()
   (format-time-string "%Y%m%d%H%M%S%3N"))
 
+(defun tiddlywiki-org-mode-tiddler-preamble (title)
+  "returns a default preamble section for org-mode content type"
+  (format "created: %s
+modified: %s
+tags: 
+title: %s
+type: %s"
+          (tiddlywiki-timestamp)
+          (tiddlywiki-timestamp)
+          title
+          tiddlywiki-org-mode-mimetype))
 
 (defun tiddlywiki-parse-tid-file ()
   (interactive)
