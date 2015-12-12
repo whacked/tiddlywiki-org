@@ -85,12 +85,13 @@ exports["application/js"] = function(type,text,options) {
      
      http://tiddlywiki.com/dev/static/WidgetModules.html
 
-     though for example it doesn't cover the "element". It looks like
-     the lowest level type is the "string" type; i.e. you cannot set
-     return a raw string; the raw string must be wrapped in a ={type:
-     "string", value: $raw_string}=. Then, a =text= type is a text DOM
-     node.
+     Also see http://tiddlywiki.com/dev/static/Parser.html
 
+     It looks like the lowest level type is the "string" type;
+     i.e. you cannot set return a raw string; the raw string must be
+     wrapped in a ={type: "string", value: $raw_string}=. Then, a
+     =text= type is a text DOM node.
+     
      If you return raw HTML inside a =text= type, it will escape the
      tags into =&lt;= and =&gt;=. To give raw HTML for the browser
      it looks like you return a ={type: "raw", html: $your_html}=
