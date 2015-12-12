@@ -17,15 +17,15 @@
           ;; end read header
           (setq in-header nil))
         (forward-line))
-      (setq prop-list (plist-put prop-list :header-end (point)))
-      (setq prop-list (plist-put prop-list :nheader (- (line-number-at-pos) 2)))
+      (setq prop-list (plist-put prop-list :header-end-point (point)))
+      (setq prop-list (plist-put prop-list :header-line-count (- (line-number-at-pos) 2)))
       (setq prop-list (plist-put prop-list :content (buffer-substring (point) (point-max))))
       prop-list)))
 
 (defun tiddlywiki-narrow-file ()
   (interactive)
   (let ((info (tiddlywiki-parse-tid-file)))
-    (goto-line (+ (plist-get info :nheader) 2))
+    (goto-line (+ (plist-get info :header-line-count) 2))
     (narrow-to-region (point) (point-max))
     (let ((ftype (plist-get info 'type)))
       (cond ((string= ftype "text/org")
@@ -46,7 +46,7 @@
 (defun tiddlywiki-set-header-read-only ()
   (let ((info (tiddlywiki-parse-tid-file))
         (modified (buffer-modified-p)))
-    (add-text-properties (point-min) (plist-get info :header-end)
+    (add-text-properties (point-min) (plist-get info :header-end-point)
                          '(read-only t face warning))
     (set-buffer-modified-p modified)))
 
@@ -56,7 +56,7 @@
         (cur-inhibit-read-only inhibit-read-only)
         (modified (buffer-modified-p)))
     (setq inhibit-read-only t)
-    (remove-text-properties (point-min) (plist-get info :header-end) '(read-only t face warning))
+    (remove-text-properties (point-min) (plist-get info :header-end-point) '(read-only t face warning))
     (setq inhibit-read-only cur-inhibit-read-only)
     (set-buffer-modified-p modified)))
 
