@@ -1,6 +1,8 @@
 ;; TODO
 ;; method for creating new tid file directly from emacs = generate .tid and add header stuff
 
+(defvar tiddlywiki-org-mode-mimetype "text/org")
+
 
 (defun tiddlywiki-parse-tid-file ()
   (interactive)
@@ -28,8 +30,8 @@
     (goto-line (+ (plist-get info :header-line-count) 2))
     (narrow-to-region (point) (point-max))
     (let ((ftype (plist-get info 'type)))
-      (cond ((string= ftype "text/org")
-             (message "orgmode")
+      (cond ((string= ftype tiddlywiki-org-mode-mimetype)
+             (message "org-mode")
              (org-mode))
             ((string= ftype "text/x-markdown")
              (message "markdown")
