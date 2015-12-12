@@ -32,7 +32,7 @@
              (message "orgmode")
              (org-mode))
             ((string= ftype "text/x-markdown")
-             (message "orgmode")
+             (message "markdown")
              (markdown-mode))
             (t
              (message "nothing"))))))
