@@ -41,7 +41,22 @@ type: %s"
 (defun tiddlywiki-narrow-file ()
   (interactive)
   (let ((info (tiddlywiki-parse-tid-file)))
-    (goto-line (+ (plist-get info :header-line-count) 2))
+    
+    (if (> 1 (plist-get info :header-line-count))
+        ;; HACK WARNING
+        ;; *** if we assume wrong here, may clobber the file.***
+        ;; there is no preamble/metadata section. Assume this is a new file,
+        ;; and create the preamble.
+        (progn
+          (message "No preamble found, creating one...")
+          (insert (tiddlywiki-org-mode-tiddler-preamble (file-name-base (buffer-name)))
+                  "\n\n")
+          ;; re-set the content type
+          (setq info (plist-put info 'type tiddlywiki-org-mode-mimetype)))
+
+      ;; assume existing tiddler with correct header information
+      (goto-line (+ (plist-get info :header-line-count) 2)))
+    
     (narrow-to-region (point) (point-max))
     (let ((ftype (plist-get info 'type)))
       (cond ((string= ftype tiddlywiki-org-mode-mimetype)
@@ -51,7 +66,7 @@ type: %s"
              (message "markdown")
              (markdown-mode))
             (t
-             (message "nothing"))))))
+             (message (concat "unhandled mode: " type)))))))
 
 (defun tiddlywiki-widen-file ()
   (interactive)
