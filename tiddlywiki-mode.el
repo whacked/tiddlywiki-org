@@ -1,3 +1,7 @@
+;; TODO
+;; method for creating new tid file directly from emacs = generate .tid and add header stuff
+
+
 (defun tiddlywiki-parse-tid-file ()
   (interactive)
   (save-excursion
