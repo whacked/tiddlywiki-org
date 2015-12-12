@@ -87,9 +87,9 @@ exports["application/js"] = function(type,text,options) {
 
      though for example it doesn't cover the "element". It looks like
      the lowest level type is the "string" type; i.e. you cannot set
-     return a straight string; the straight string must be wrapped in
-     a ={type: "string", value: $straight_string}=. Then, a =text=
-     type is a text DOM node.
+     return a raw string; the raw string must be wrapped in a ={type:
+     "string", value: $raw_string}=. Then, a =text= type is a text DOM
+     node.
 
      If you return raw HTML inside a =text= type, it will escape the
      tags into =&lt;= and =&gt;=. To give raw HTML for the browser
