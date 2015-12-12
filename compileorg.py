@@ -72,7 +72,7 @@ description: Org-mode plugin wrapping org-mode-parser.js
 plugin-type: plugin
 title: $:/plugins/tiddlywiki/orgmode
 type: application/json
-version: 5.1.7
+version: 0.0.1
 
 '''%dict(
     author_name = 'whacked',
