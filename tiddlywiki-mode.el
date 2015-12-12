@@ -3,6 +3,9 @@
 
 (defvar tiddlywiki-org-mode-mimetype "text/org")
 
+(defun tiddlywiki-timestamp ()
+  (format-time-string "%Y%m%d%H%M%S%3N"))
+
 
 (defun tiddlywiki-parse-tid-file ()
   (interactive)
@@ -81,7 +84,7 @@
       (beginning-of-buffer)
       (search-forward "modified: ")
       (kill-line)
-      (insert (format-time-string "%Y%m%d%H%M%S%3N")))
+      (insert (tiddlywiki-timestamp)))
     (tiddlywiki-set-header-read-only)))
 
 (add-hook 'before-save-hook 'tiddlywiki-update-modified-time)
