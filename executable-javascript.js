@@ -149,7 +149,14 @@ exports["application/js"] = function(type,text,options) {
   });
   
   var call_string = "("+parsed.body+")(env)";
-  var result = eval(call_string);
+  var result;
+  try {
+    result = eval(call_string);
+  } catch(e) {
+    console.warn("Caught exception during evaluation of content: " + parsed.body);
+    console.error(e);
+    result = "[ERROR]";
+  }
   switch(typeof result) {
   case "object":
     if(Array.isArray(result)) {
