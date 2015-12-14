@@ -1,3 +1,7 @@
+// see https://groups.google.com/forum/#!topic/tiddlywiki/NwOI-QER2ig
+// and http://fiddle.tiddlyspot.com
+// for a possibly easier way to do this
+
 (function(){
   /*jslint node: true, browser: true */
   /*global $tw: false */
@@ -36,7 +40,7 @@
         var split_on_var = strip_comment.split(match_var);
         if(split_on_var.length > 0) {
           split_on_var.forEach(function(match) {
-            var pair = trim(match).split("=", 2);
+            var pair = trim(match).split(/\s*=\s*/, 2);
             out.env[pair[0]] = pair[1];
           });
         }
