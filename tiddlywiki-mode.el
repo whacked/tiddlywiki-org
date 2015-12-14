@@ -1,6 +1,22 @@
 ;; TODO
 ;; method for creating new tid file directly from emacs = generate .tid and add header stuff
 
+(defvar tiddlywiki-org-mode-mimetype "text/org")
+
+(defun tiddlywiki-timestamp ()
+  (format-time-string "%Y%m%d%H%M%S%3N"))
+
+(defun tiddlywiki-org-mode-tiddler-preamble (title)
+  "returns a default preamble section for org-mode content type"
+  (format "created: %s
+modified: %s
+tags: 
+title: %s
+type: %s"
+          (tiddlywiki-timestamp)
+          (tiddlywiki-timestamp)
+          title
+          tiddlywiki-org-mode-mimetype))
 
 (defun tiddlywiki-parse-tid-file ()
   (interactive)
@@ -17,25 +33,40 @@
           ;; end read header
           (setq in-header nil))
         (forward-line))
-      (setq prop-list (plist-put prop-list :header-end (point)))
-      (setq prop-list (plist-put prop-list :nheader (- (line-number-at-pos) 2)))
+      (setq prop-list (plist-put prop-list :header-end-point (point)))
+      (setq prop-list (plist-put prop-list :header-line-count (- (line-number-at-pos) 2)))
       (setq prop-list (plist-put prop-list :content (buffer-substring (point) (point-max))))
       prop-list)))
 
 (defun tiddlywiki-narrow-file ()
   (interactive)
   (let ((info (tiddlywiki-parse-tid-file)))
-    (goto-line (+ (plist-get info :nheader) 2))
+    
+    (if (> 1 (plist-get info :header-line-count))
+        ;; HACK WARNING
+        ;; *** if we assume wrong here, may clobber the file.***
+        ;; there is no preamble/metadata section. Assume this is a new file,
+        ;; and create the preamble.
+        (progn
+          (message "No preamble found, creating one...")
+          (insert (tiddlywiki-org-mode-tiddler-preamble (file-name-base (buffer-name)))
+                  "\n\n")
+          ;; re-set the content type
+          (setq info (plist-put info 'type tiddlywiki-org-mode-mimetype)))
+
+      ;; assume existing tiddler with correct header information
+      (goto-line (+ (plist-get info :header-line-count) 2)))
+    
     (narrow-to-region (point) (point-max))
     (let ((ftype (plist-get info 'type)))
-      (cond ((string= ftype "text/org")
-             (message "orgmode")
+      (cond ((string= ftype tiddlywiki-org-mode-mimetype)
+             (message "org-mode")
              (org-mode))
             ((string= ftype "text/x-markdown")
-             (message "orgmode")
+             (message "markdown")
              (markdown-mode))
             (t
-             (message "nothing"))))))
+             (message (concat "unhandled mode: " type)))))))
 
 (defun tiddlywiki-widen-file ()
   (interactive)
@@ -46,7 +77,7 @@
 (defun tiddlywiki-set-header-read-only ()
   (let ((info (tiddlywiki-parse-tid-file))
         (modified (buffer-modified-p)))
-    (add-text-properties (point-min) (plist-get info :header-end)
+    (add-text-properties (point-min) (plist-get info :header-end-point)
                          '(read-only t face warning))
     (set-buffer-modified-p modified)))
 
@@ -56,7 +87,7 @@
         (cur-inhibit-read-only inhibit-read-only)
         (modified (buffer-modified-p)))
     (setq inhibit-read-only t)
-    (remove-text-properties (point-min) (plist-get info :header-end) '(read-only t face warning))
+    (remove-text-properties (point-min) (plist-get info :header-end-point) '(read-only t face warning))
     (setq inhibit-read-only cur-inhibit-read-only)
     (set-buffer-modified-p modified)))
 
@@ -79,7 +110,7 @@
       (beginning-of-buffer)
       (search-forward "modified: ")
       (kill-line)
-      (insert (format-time-string "%Y%m%d%H%M%S%3N")))
+      (insert (tiddlywiki-timestamp)))
     (tiddlywiki-set-header-read-only)))
 
 (add-hook 'before-save-hook 'tiddlywiki-update-modified-time)
