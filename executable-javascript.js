@@ -2,6 +2,16 @@
 // and http://fiddle.tiddlyspot.com
 // for a possibly easier way to do this
 
+// HACK add utility functions for system default openers
+try {
+  Opener = require("nw.gui").Shell;
+} catch(e) {
+  Opener = {};
+  Opener.openItem = Opener.openExternal = function(href) {
+    window.open(href, "_blank");
+  }
+}
+
 (function(){
   /*jslint node: true, browser: true */
   /*global $tw: false */
