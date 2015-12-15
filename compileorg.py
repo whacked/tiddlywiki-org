@@ -22,6 +22,7 @@ def get_content(path):
             return open(path).read()
     raise ValueError('failed to get content for given path: %s'%path)
 
+BASE_NAMESPACE = "$:/plugins/tiddlywiki/org-mode-parser"
 out = {
     "tiddlers": {
         "$:/language/Docs/Types/text/org": {
@@ -30,20 +31,20 @@ out = {
             "name": "text/org"
         },
         # the actual parser library
-        "$:/plugins/tiddlywiki/org-mode-parser/org-mode-parser.js": {
+        (BASE_NAMESPACE + "/org-mode-parser.js"): {
             "type": "application/javascript",
-            "title": "$:/plugins/tiddlywiki/org-mode-parser/org-mode-parser.js",
+            "title": BASE_NAMESPACE + "/org-mode-parser.js",
             "module-type": "library",
         },
         # underscore lib
-        "$:/plugins/tiddlywiki/org-mode-parser/underscore.js": {
+        (BASE_NAMESPACE + "/underscore.js"): {
             "type": "application/javascript",
-            "title": "$:/plugins/tiddlywiki/org-mode-parser/underscore.js",
+            "title": BASE_NAMESPACE + "/underscore.js",
             "module-type": "library",
         },
         # interaction/glue code for TW
-        "$:/plugins/tiddlywiki/org-mode-parser/wrapper.js": {
-            "title": "$:/plugins/tiddlywiki/org-mode-parser/wrapper.js",
+        (BASE_NAMESPACE + "/wrapper.js"): {
+            "title": BASE_NAMESPACE + "/wrapper.js",
             "type": "application/javascript",
             "module-type": "parser"
         }
@@ -54,12 +55,11 @@ out = {
 plugin_tohtml = get_content(p.join(ORG_MODE_PARSER_BASEPATH, 'lib/plugin-tohtml.js'))
 
 tiddlers = out["tiddlers"]
-BASE_NAMESPACE = "$:/plugins/tiddlywiki/org-mode-parser"
 tiddlers[BASE_NAMESPACE+"/org-mode-parser.js"]["text"] = get_content(p.join(ORG_MODE_PARSER_BASEPATH, 'lib/org-mode-parser.js')) \
   .replace('return OrgQuery;', '\n\n' + plugin_tohtml + '\n\nreturn OrgQuery;') \
   .replace('var util=require(\'util\');', '') \
   .replace('var fs=require("fs");', '') \
-  .replace('require("underscore");', 'require("$:/plugins/tiddlywiki/org-mode-parser/underscore.js");')
+  .replace('require("underscore");', 'require("'+BASE_NAMESPACE+'/underscore.js");')
 
 tiddlers[BASE_NAMESPACE+"/wrapper.js"]["text"]         = open('orgwrapper.js').read()
 tiddlers[BASE_NAMESPACE+"/underscore.js"]["text"]      = get_content(UNDERSCORE_JS_PATH)
