@@ -28,3 +28,24 @@
   1. narrows the buffer so the =tid= header metadata is hidden
   2. tries to apply the correct major mode based on the tiddlywiki-specified content type
   3. updates the timestamps on save
+
+* notes in using mooz's renderer
+
+  - currently outputting raw html (and not a widget tree) to TW from the plugin
+  - don't know how to disable the section header numbers from the html output;
+    this is easily (and probably better) addressed using a stylesheet tiddler,
+    for example:
+
+** stylesheet tiddler for mooz's org-output
+
+   - create a tiddler, any title, e.g. "org stylesheet"
+   - *important*: must give add a tag called =$:/tags/Stylesheet=
+   - set e.g. this text to stylize section header numbers (or hide them, or whatever)
+  
+#+BEGIN_SRC css
+span.section-number {
+	font-family: monospace;
+    opacity: 0.2;
+    margin-right: 0.5em;
+}
+#+END_SRC
