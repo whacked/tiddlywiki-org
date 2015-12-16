@@ -9,11 +9,9 @@ Wraps up the org-mode-parser parser for use in TiddlyWiki5
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
-//"use strict";
+"use strict";
 
-  x = require;
-  
-Org = require("$:/plugins/tiddlywiki/org-js/org.js");
+var Org = require("$:/plugins/whacked/org-js/org.js");
 
 exports["text/org"] = function(type,text,options) {
   var orgParser = new Org.Parser();

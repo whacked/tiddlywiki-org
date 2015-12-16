@@ -4,8 +4,6 @@ import datetime
 import json
 import urllib2
 
-ORG_MODE_PARSER_BASEPATH = 'https://raw.githubusercontent.com/whacked/org-mode-parser/client-side-rendering'
-# ORG_MODE_PARSER_BASEPATH = p.expanduser('~/PATH/TO/local/fork')
 
 def get_content(path):
     if path.startswith('http'):
