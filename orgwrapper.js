@@ -9,70 +9,23 @@ Wraps up the org-mode-parser parser for use in TiddlyWiki5
 
 /*jslint node: true, browser: true */
 /*global $tw: false */
-"use strict";
+//"use strict";
 
-var orgModeParser = require("$:/plugins/tiddlywiki/org-mode-parser/org-mode-parser.js");
+  x = require;
+  
+Org = require("$:/plugins/tiddlywiki/org-js/org.js");
 
-function transformNodes(nodes) {
-  var results = [];
-  for(var index=0; index<nodes.length; index++) {
-    results.push(transformNode(nodes[index]));
-  }
-  return results;
-}
-
-function transformNode(node) {
-  if($tw.utils.isArray(node)) {
-    var p = 0,
-        widget = {type: "element", tag: node[p++], attributes: {}};
-    if(!$tw.utils.isArray(node[p]) && typeof(node[p]) === "object") {
-      widget.attributes = {};
-      $tw.utils.each(node[p++],function(value,name) {
-        widget.attributes[name] = {type: "string", value: value};
-      });
-    }
-    widget.children = transformNodes(node.slice(p++));
-    // Massage images into the image widget
-    if(widget.tag === "img") {
-      widget.type = "image";
-      if(widget.attributes.alt) {
-        widget.attributes.tooltip = widget.attributes.alt;
-        delete widget.attributes.alt;
-      }
-      if(widget.attributes.src) {
-        widget.attributes.source = widget.attributes.src;
-        delete widget.attributes.src;
-      }
-    }
-    // Massage file: links to use local #link syntax
-    else if(widget.tag === "a") {
-      if(widget.attributes.href.value.match(/^file:/i)) {
-        widget.attributes.href.value = widget.attributes.href.value.replace(/^file:/i, "#").replace(/\.tid$/i, "");
-      }
-    }
-    return widget;
-  } else {
-    return {type: "text", text: node};
-  }
-}
-
-var orgRenderer = function(type,text,options) {
-  var orgList = orgModeParser.parseBigString(text);
-  var oq = new orgModeParser.OrgQuery(orgList);
-  this.tree = transformNodes(oq.toTree());
+exports["text/org"] = function(type,text,options) {
+  var orgParser = new Org.Parser();
+  var orgDocument = orgParser.parse(text);
+  var orgHTMLDocument = orgDocument.convert(Org.ConverterHTML, {
+    headerOffset: 0,
+    exportFromLineNumber: false,
+    suppressSubscriptHandling: false,
+    suppressAutoLink: false
+  });
+  this.tree = [{type: "raw", html: orgHTMLDocument.contentHTML}];
 };
-
-/*
-
-[ 'html',
-  [ 'p', 'something' ],
-  [ 'h1',
-    'heading and ',
-    [ 'strong', 'other' ] ] ]
-
-*/
-
-exports["text/org"] = orgRenderer;
 
 })();
 

@@ -6,8 +6,6 @@ import urllib2
 
 ORG_MODE_PARSER_BASEPATH = 'https://raw.githubusercontent.com/whacked/org-mode-parser/client-side-rendering'
 # ORG_MODE_PARSER_BASEPATH = p.expanduser('~/PATH/TO/local/fork')
-UNDERSCORE_JS_PATH = 'https://raw.githubusercontent.com/jashkenas/underscore/master/underscore-min.js'
-# UNDERSCORE_JS_PATH = p.join(ORG_MODE_PARSER_BASEPATH, 'lib/underscore-min.js')
 
 def get_content(path):
     if path.startswith('http'):
@@ -22,7 +20,7 @@ def get_content(path):
             return open(path).read()
     raise ValueError('failed to get content for given path: %s'%path)
 
-BASE_NAMESPACE = "$:/plugins/tiddlywiki/org-mode-parser"
+BASE_NAMESPACE = "$:/plugins/tiddlywiki/org-js"
 out = {
     "tiddlers": {
         "$:/language/Docs/Types/text/org": {
@@ -31,15 +29,9 @@ out = {
             "name": "text/org"
         },
         # the actual parser library
-        (BASE_NAMESPACE + "/org-mode-parser.js"): {
+        (BASE_NAMESPACE + "/org.js"): {
             "type": "application/javascript",
-            "title": BASE_NAMESPACE + "/org-mode-parser.js",
-            "module-type": "library",
-        },
-        # underscore lib
-        (BASE_NAMESPACE + "/underscore.js"): {
-            "type": "application/javascript",
-            "title": BASE_NAMESPACE + "/underscore.js",
+            "title": BASE_NAMESPACE + "/org.js",
             "module-type": "library",
         },
         # interaction/glue code for TW
@@ -52,23 +44,19 @@ out = {
 }
 
 
-plugin_tohtml = get_content(p.join(ORG_MODE_PARSER_BASEPATH, 'lib/plugin-tohtml.js'))
-
 tiddlers = out["tiddlers"]
-tiddlers[BASE_NAMESPACE+"/org-mode-parser.js"]["text"] = get_content(p.join(ORG_MODE_PARSER_BASEPATH, 'lib/org-mode-parser.js')) \
-  .replace('return OrgQuery;', '\n\n' + plugin_tohtml + '\n\nreturn OrgQuery;') \
-  .replace('var util=require(\'util\');', '') \
-  .replace('var fs=require("fs");', '') \
-  .replace('require("underscore");', 'require("'+BASE_NAMESPACE+'/underscore.js");')
-
-tiddlers[BASE_NAMESPACE+"/wrapper.js"]["text"]         = open('orgwrapper.js').read()
-tiddlers[BASE_NAMESPACE+"/underscore.js"]["text"]      = get_content(UNDERSCORE_JS_PATH)
+# NOTE: the export hack is necessary for the module to load properly in TW
+tiddlers[BASE_NAMESPACE+"/org.js"]["text"] = \
+  get_content("https://raw.githubusercontent.com/mooz/org-js/master/org.js") \
+  .replace('var Org = ', '', 1) \
+  .replace('var exports = {};', '', 1)
+tiddlers[BASE_NAMESPACE+"/wrapper.js"]["text"] = open('orgwrapper.js').read()
 
 HEADER = '''\
 author: %(author_name)s
 created: %(time_create)s
 dependents: 
-description: Org-mode plugin wrapping org-mode-parser.js
+description: Org-mode plugin wrapping org.js
 plugin-type: plugin
 title: $:/plugins/tiddlywiki/orgmode
 type: application/json
