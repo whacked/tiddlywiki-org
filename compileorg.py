@@ -4,6 +4,7 @@ import datetime
 import json
 import urllib2
 
+PUBLISHER_NAME = 'whacked'
 
 def get_content(path):
     if path.startswith('http'):
@@ -18,7 +19,7 @@ def get_content(path):
             return open(path).read()
     raise ValueError('failed to get content for given path: %s'%path)
 
-BASE_NAMESPACE = "$:/plugins/tiddlywiki/org-js"
+BASE_NAMESPACE = "$:/plugins/%s/org-js" % PUBLISHER_NAME
 out = {
     "tiddlers": {
         "$:/language/Docs/Types/text/org": {
@@ -56,12 +57,12 @@ created: %(time_create)s
 dependents: 
 description: Org-mode plugin wrapping org.js
 plugin-type: plugin
-title: $:/plugins/tiddlywiki/orgmode
+title: $:/plugins/%(author_name)s/orgmode
 type: application/json
 version: 0.0.1
 
 '''%dict(
-    author_name = 'whacked',
+    author_name = PUBLISHER_NAME,
     time_create = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3],
 )
 
@@ -72,7 +73,7 @@ if '-save' in sys.argv:
     # tiddlywiki MYDIR --server
     # = MYDIR here
     twdir = sys.argv[sys.argv.index('-save')+1]
-    with open(p.join(twdir, 'tiddlers', '$__plugins_tiddlywiki_orgmode.tid'), 'w') as ofile:
+    with open(p.join(twdir, 'tiddlers', '$__plugins_%s_orgmode.tid'%PUBLISHER_NAME), 'w') as ofile:
         ofile.write(HEADER + txt)
         print('OK: wrote %s' % ofile.name)
 else:
