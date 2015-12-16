@@ -58,12 +58,33 @@ type: %s"
       (goto-line (+ (plist-get info :header-line-count) 2)))
     
     (narrow-to-region (point) (point-max))
+
+    ;; edit mode dispatch
     (let ((ftype (plist-get info 'type)))
       (cond ((string= ftype tiddlywiki-org-mode-mimetype)
-             (message "org-mode")
+             (message "org-mode file")
              (org-mode))
             ((string= ftype "text/x-markdown")
-             (message "markdown")
+             (message "markdown file")
+             (markdown-mode))
+            ((string= ftype "application/javascript")
+             (message "javascript source")
+             (js2-mode))
+            ((string= ftype "application/js")
+             (message "executable javascript")
+             (js2-mode))
+            ((string= ftype "application/json")
+             (message "json source")
+             (javascript-mode))
+            ((string= ftype "text/css")
+             (message "css source")
+             (css-mode))
+            ((string= ftype "text/html")
+             (message "html source")
+             (html-mode))
+            ((string= ftype "text/vnd.tiddlywiki")
+             (message "tiddlywiki WikiText")
+             ;; FIXME fixme1
              (markdown-mode))
             (t
              (message (concat "unhandled mode: " type)))))))
@@ -126,3 +147,6 @@ type: %s"
     (tiddlywiki-narrow-file)
     ))
 (add-to-list 'auto-mode-alist '("\\.tid\\'" . tiddlywiki-mode))
+
+
+

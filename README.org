@@ -1,30 +1,30 @@
-* motivation
+* emacs and org-mode interaction for TiddlyWiki 5
 
-  interested in using [[http://tiddlywiki.com/][TiddlyWiki 5]]
+  sporadic work in progress.
 
-  it has a [[http://tiddlywiki.com/plugins/tiddlywiki/markdown/][markdown plugin]] so why not use org-mode instead?
-
-  better yet, why not edit org files from emacs instead, and get to
-  use TW's tags and web rendering?
-
-  *this is a roundabout hack. you have been warned*
-
-  /but it works! (well, sort of)/ :-D
+  *caveat emptor*: this is a bit of a hack, but it works for me
   
-* how to use / install
+** what this lets you do
 
-  1. generate the plugin's tiddler:
-     =python compileorg.py -save $DIRNAME=
-     where =$DIRNAME= is the base path (contains the tiddlywiki.info file) of your tiddlywiki.
-     this will auto-populate a tiddler that is the org-mode plugin.
-  2. =tiddlywiki $DIRNAME --server $PORTNUMBER= [default 8080]
+   1. add =org-mode= type to TiddlyWiki + render it (now using [[https://github.com/mooz/org-js][mooz's org-js]])
+   2. edit =tid= files in emacs
 
-  if you want to hack on the parser check out my client-side-rendering branch of [[https://github.com/whacked/org-mode-parser][org-mode-parser]]
+** for live updating to edits made from emacs (or elsewhere)
 
-edit your tiddlywiki as you please.
+   see [[https://github.com/Jermolene/TiddlyWiki5/issues/1530][discussion on issue 1530]] about how to get TW/TD to monitor + update tiddlers edited externally
+   
+** how to use / install
+
+   1. generate the plugin's tiddler:
+      =python compileorg.py -save $DIRNAME=
+      where =$DIRNAME= is the base path (contains the tiddlywiki.info file) of your tiddlywiki.
+      this will auto-populate a tiddler that is the org-mode plugin.
+   2. =tiddlywiki $DIRNAME --server $PORTNUMBER= [default 8080] / launch TiddlyDesktop
 
 * tiddlywiki-mode.el
 
-  streamlines editing of =text/org= type tiddlers in emacs
+  provides a basic tiddlywiki mode that:
   
-  
+  1. narrows the buffer so the =tid= header metadata is hidden
+  2. tries to apply the correct major mode based on the tiddlywiki-specified content type
+  3. updates the timestamps on save
