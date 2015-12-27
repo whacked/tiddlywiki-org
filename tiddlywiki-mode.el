@@ -26,7 +26,7 @@ type: %s"
           (content nil)
           (in-header t))
       (while in-header
-        (if (looking-at "^\\([^:]+\\):[[:space:]]+?\\(.+\\)$")
+        (if (looking-at "^\\([^\s]+\\):[[:space:]]+?\\(.+\\)$")
             ;; in header
             (setq prop-list (plist-put prop-list (intern (match-string 1))
                                        (match-string 2)))
