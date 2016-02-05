@@ -36,7 +36,7 @@ exports["text/org"] = function(type,text,options) {
     } else {
       // note the "#" --> this is needed for TW's href for local tiddlers
       // (otherwise the link will be seen as e.g. http://localhost:8080/link
-      procLine = origLine.replace(/\[\[(.+?)\.tid\](\[.+?\])?\]/g, "[[#$1]$2]");
+      procLine = origLine.replace(/\[\[(?:file:)([^\/.])(.+?)\.tid\](\[.+?\])?\]/g, "[[#$1$2]$3]")
     }
     arrPreproc.push(procLine);
   });
