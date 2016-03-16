@@ -145,7 +145,9 @@ type: %s"
   (progn
     (tiddlywiki-set-header-read-only)
     (tiddlywiki-narrow-file)
-    ))
+    ;; TODO: look into reapplying narrow file after auto revert
+    ;; ref http://www.gnu.org/software/emacs/manual/html_node/elisp/Reverting.html
+    (auto-revert-mode)))
 (add-to-list 'auto-mode-alist '("\\.tid\\'" . tiddlywiki-mode))
 
 
