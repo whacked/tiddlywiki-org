@@ -43,9 +43,19 @@
    - set e.g. this text to stylize section header numbers (or hide them, or whatever)
   
 #+BEGIN_SRC css
-span.section-number {
-	font-family: monospace;
-    opacity: 0.2;
-    margin-right: 0.5em;
-}
+  span.section-number {
+      font-family: monospace;
+      opacity: 0.2;
+      margin-right: 0.5em;
+  }
+
+  span.task-status {
+      padding: 2px;
+      margin: 2px;
+  }
+  span.task-status.todo {
+      color: red;
+      font-weight: bold;
+  }
+
 #+END_SRC
