@@ -11,68 +11,46 @@ Wraps up the org-mode-parser parser for use in TiddlyWiki5
 /*global $tw: false */
 "use strict";
 
-var orgModeParser = require("$:/plugins/tiddlywiki/org-mode-parser/org-mode-parser.js");
+var Org = require("$:/plugins/whacked/org-js/org.js");
 
-function transformNodes(nodes) {
-  var results = [];
-  for(var index=0; index<nodes.length; index++) {
-    results.push(transformNode(nodes[index]));
-  }
-  return results;
-}
+exports["text/org"] = function(type,text,options) {
 
-function transformNode(node) {
-  if($tw.utils.isArray(node)) {
-    var p = 0,
-        widget = {type: "element", tag: node[p++], attributes: {}};
-    if(!$tw.utils.isArray(node[p]) && typeof(node[p]) === "object") {
-      widget.attributes = {};
-      $tw.utils.each(node[p++],function(value,name) {
-        widget.attributes[name] = {type: "string", value: value};
-      });
+  // preprocess:
+  // - pre-apply transclusion directives:
+  //   #+INCLUDE: "source_file.org" :lines N-M
+  //   for now we will just inject it completely
+  // - change local_link to #local_link for TW intralinking
+  var includePattern = /\s*#\+INCLUDE:\s*"?([^ "]+)"?\s*(?::lines\s+(\d+)[-~](\d+))?\s*?/;
+  
+  var arrPreproc = [];
+  text.split("\n").forEach(function(origLine) {
+    var procLine;
+    
+    var transcludeMatch = origLine.match(includePattern);
+    if(Array.isArray(transcludeMatch)) {
+      var sourceFile = transcludeMatch[1],
+          lineBegin = transcludeMatch[2], // ignored for now
+          lineEnd = transcludeMatch[3], // ignored for now
+          sourceTiddler = sourceFile.replace(/\.[^\.]+$/, ""); // strip extension
+      procLine = options.wiki.getTextReference(sourceTiddler, "ERROR: no text", null);
+    } else {
+      // note the "#" --> this is needed for TW's href for local tiddlers
+      // (otherwise the link will be seen as e.g. http://localhost:8080/link
+      procLine = origLine.replace(/\[\[(?:file:)([^\/.])(.+?)\.tid\](\[.+?\])?\]/g, "[[#$1$2]$3]")
     }
-    widget.children = transformNodes(node.slice(p++));
-    // Massage images into the image widget
-    if(widget.tag === "img") {
-      widget.type = "image";
-      if(widget.attributes.alt) {
-        widget.attributes.tooltip = widget.attributes.alt;
-        delete widget.attributes.alt;
-      }
-      if(widget.attributes.src) {
-        widget.attributes.source = widget.attributes.src;
-        delete widget.attributes.src;
-      }
-    }
-    // Massage file: links to use local #link syntax
-    else if(widget.tag === "a") {
-      if(widget.attributes.href.value.match(/^file:/i)) {
-        widget.attributes.href.value = widget.attributes.href.value.replace(/^file:/i, "#").replace(/\.tid$/i, "");
-      }
-    }
-    return widget;
-  } else {
-    return {type: "text", text: node};
-  }
-}
-
-var orgRenderer = function(type,text,options) {
-  var orgList = orgModeParser.parseBigString(text);
-  var oq = new orgModeParser.OrgQuery(orgList);
-  this.tree = transformNodes(oq.toTree());
+    arrPreproc.push(procLine);
+  });
+  
+  var orgParser = new Org.Parser();
+  var orgDocument = orgParser.parse(arrPreproc.join("\n"));
+  var orgHTMLDocument = orgDocument.convert(Org.ConverterHTML, {
+    headerOffset: 0,
+    exportFromLineNumber: false,
+    suppressSubscriptHandling: false,
+    suppressAutoLink: false
+  });
+  this.tree = [{type: "raw", html: orgHTMLDocument.contentHTML}];
 };
-
-/*
-
-[ 'html',
-  [ 'p', 'something' ],
-  [ 'h1',
-    'heading and ',
-    [ 'strong', 'other' ] ] ]
-
-*/
-
-exports["text/org"] = orgRenderer;
 
 })();
 
