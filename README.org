@@ -59,3 +59,10 @@
   }
 
 #+END_SRC
+
+* executable javascript tiddler
+
+  =node build-executable-javascript.js $PATH_TO_TW_ROOT=
+
+  
+  
