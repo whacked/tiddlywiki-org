@@ -96,14 +96,23 @@ type: %s"
   (recenter-top-bottom))
 
 (defun tiddlywiki-set-header-read-only ()
+  (interactive)
   (let ((info (tiddlywiki-parse-tid-file))
         (modified (buffer-modified-p)))
+    ;; prevent front of first header char still being editable
+    (put-text-property 1 2 'front-sticky t)
+    (put-text-property 1 2 'rear-nonsticky nil)
+    ;; prevent front of first non-header being uneditable
+    (put-text-property (1- (plist-get info :header-end-point))
+                       (plist-get info :header-end-point)
+                       'rear-nonsticky t)
     (add-text-properties (point-min) (plist-get info :header-end-point)
                          '(read-only t face warning))
     (set-buffer-modified-p modified)))
 
 ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Read-Only-Buffers.html#Read-Only-Buffers
 (defun tiddlywiki-unset-header-read-only ()
+  (interactive)
   (let ((info (tiddlywiki-parse-tid-file))
         (cur-inhibit-read-only inhibit-read-only)
         (modified (buffer-modified-p)))
