@@ -99,6 +99,8 @@ type: %s"
   (interactive)
   (let ((info (tiddlywiki-parse-tid-file))
         (modified (buffer-modified-p)))
+    (let ((ov (make-overlay (point-min) (plist-get info :header-end-point))))
+      (overlay-put ov 'face '(:background "orange4")))
     ;; prevent front of first header char still being editable
     (put-text-property 1 2 'front-sticky t)
     (put-text-property 1 2 'rear-nonsticky nil)
@@ -119,6 +121,7 @@ type: %s"
     (setq inhibit-read-only t)
     (remove-text-properties (point-min) (plist-get info :header-end-point) '(read-only t face warning))
     (setq inhibit-read-only cur-inhibit-read-only)
+    (remove-overlays (point-min) (plist-get info :header-end-point))
     (set-buffer-modified-p modified)))
 
 (defun tiddlywiki-org-mode-hook ()
