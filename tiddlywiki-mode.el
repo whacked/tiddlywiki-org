@@ -40,54 +40,55 @@ type: %s"
 
 (defun tiddlywiki-narrow-file ()
   (interactive)
-  (let ((info (tiddlywiki-parse-tid-file)))
-    
-    (if (> 1 (plist-get info :header-line-count))
-        ;; HACK WARNING
-        ;; *** if we assume wrong here, may clobber the file.***
-        ;; there is no preamble/metadata section. Assume this is a new file,
-        ;; and create the preamble.
-        (progn
-          (message "No preamble found, creating one...")
-          (insert (tiddlywiki-org-mode-tiddler-preamble (file-name-base (buffer-name)))
-                  "\n\n")
-          ;; re-set the content type
-          (setq info (plist-put info 'type tiddlywiki-org-mode-mimetype)))
+  ;; TODO update so it returns silently for non-tid files, so we can add to revert hook
+  (save-excursion
+    (widen)
+    (let ((info (tiddlywiki-parse-tid-file)))
+      (if (> 1 (plist-get info :header-line-count))
+          (when (= 0 (buffer-size))
+            ;; there is no preamble/metadata section. Assume this is a new file,
+            ;; and create the preamble.
+            (progn
+              (message "No preamble found, creating one...")
+              (insert (tiddlywiki-org-mode-tiddler-preamble (file-name-base (buffer-name)))
+                      "\n\n")
+              ;; re-set the content type
+              (setq info (plist-put info 'type tiddlywiki-org-mode-mimetype))))
 
-      ;; assume existing tiddler with correct header information
-      (goto-line (+ (plist-get info :header-line-count) 2)))
-    
-    (narrow-to-region (point) (point-max))
+        ;; assume existing tiddler with correct header information
+        (goto-line (+ (plist-get info :header-line-count) 2)))
+      
+      (narrow-to-region (point) (point-max))
 
-    ;; edit mode dispatch
-    (let ((ftype (plist-get info 'type)))
-      (cond ((string= ftype tiddlywiki-org-mode-mimetype)
-             (message "org-mode file")
-             (org-mode))
-            ((string= ftype "text/x-markdown")
-             (message "markdown file")
-             (markdown-mode))
-            ((string= ftype "application/javascript")
-             (message "javascript source")
-             (js2-mode))
-            ((string= ftype "application/js")
-             (message "executable javascript")
-             (js2-mode))
-            ((string= ftype "application/json")
-             (message "json source")
-             (javascript-mode))
-            ((string= ftype "text/css")
-             (message "css source")
-             (css-mode))
-            ((string= ftype "text/html")
-             (message "html source")
-             (html-mode))
-            ((string= ftype "text/vnd.tiddlywiki")
-             (message "tiddlywiki WikiText")
-             ;; FIXME fixme1
-             (markdown-mode))
-            (t
-             (message (concat "unhandled mode: " type)))))))
+      ;; edit mode dispatch
+      (let ((ftype (plist-get info 'type)))
+        (cond ((string= ftype tiddlywiki-org-mode-mimetype)
+               (message "org-mode file")
+               (org-mode))
+              ((string= ftype "text/x-markdown")
+               (message "markdown file")
+               (markdown-mode))
+              ((string= ftype "application/javascript")
+               (message "javascript source")
+               (js2-mode))
+              ((string= ftype "application/js")
+               (message "executable javascript")
+               (js2-mode))
+              ((string= ftype "application/json")
+               (message "json source")
+               (javascript-mode))
+              ((string= ftype "text/css")
+               (message "css source")
+               (css-mode))
+              ((string= ftype "text/html")
+               (message "html source")
+               (html-mode))
+              ((string= ftype "text/vnd.tiddlywiki")
+               (message "tiddlywiki WikiText")
+               ;; FIXME fixme1
+               (markdown-mode))
+              (t
+               (message (concat "unhandled mode: " type))))))))
 
 (defun tiddlywiki-widen-file ()
   (interactive)
@@ -160,7 +161,10 @@ type: %s"
     ;; TODO: look into reapplying narrow file after auto revert
     ;; ref http://www.gnu.org/software/emacs/manual/html_node/elisp/Reverting.html
     (auto-revert-mode)))
+
 (add-to-list 'auto-mode-alist '("\\.tid\\'" . tiddlywiki-mode))
+;; add after fix non-tid detect
+;; (add-hook 'after-revert-hook 'tiddlywiki-narrow-file)
 
 
 
