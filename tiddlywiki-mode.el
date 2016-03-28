@@ -143,7 +143,7 @@ type: %s"
     (save-excursion
       (beginning-of-buffer)
       (search-forward "modified: ")
-      (kill-line)
+      (delete-region (point) (line-end-position))
       (insert (tiddlywiki-timestamp)))
     (tiddlywiki-set-header-read-only)))
 
