@@ -1,26 +1,6 @@
 * emacs and org-mode interaction for TiddlyWiki 5
 
-  sporadic work in progress.
-
-** caveat emptor
-
-   this is a bit of a hack.
-
-*** current issues
-
-    - renaming files from the browser (sometimes) crashes the node server
-
-*** auto-revert workaround
-
-    previous commit relied on =auto-revert-mode=, which caused a lag from the tiddlywiki server picking up the change and updating the file mtime.
-    the update mechanism is overridden in [[https://github.com/whacked/TiddlyWiki5/tree/2015-12_chokidar-with-browser-notify][this tiddlywiki fork]] such that =auto-revert-mode= is no longer necessary. I don't know the larger impact of the workaround.
-
-*** file name restrictions for interop
-
-    from experience (and not investigation), tiddler files and tiddler titles should have no spaces in them.
-    TiddlyWiki will convert spaces in titles created through the browser into underscores, but reads the tiddler title from the =title= field in the tiddler headers.
-
-    This causes some trickiness in the org-style links when editing in emacs. It may be possible to use =%20= for spaces in the links. Haven't bothered trying, but mixing plain spaces and underscores /will/ fail.
+  sporadic work in progress. *caveat emptor: this is a bit of a hack*
 
 ** what this lets you do
 
@@ -30,6 +10,8 @@
 ** for live updating to edits made from emacs (or elsewhere)
 
    see [[https://github.com/Jermolene/TiddlyWiki5/issues/1530][discussion on issue 1530]] about how to get TW/TD to monitor + update tiddlers edited externally
+
+   also see [[https://github.com/whacked/TiddlyWiki5/tree/2015-12_chokidar-with-browser-notify][this tiddlywiki fork]]
    
 ** how to use / install
 
@@ -77,6 +59,28 @@
   }
 
 #+END_SRC
+
+* current issues
+
+  usually resolved by restarting the server. At present these are minor annoyances.
+
+** new files created from emacs will not be picked up by the server
+
+** node server crashes
+
+   sometimes when renaming files from the browser. Haven't looked deeper into cause.
+
+** auto-revert workaround
+
+   previous commit relied on =auto-revert-mode=, which caused a lag from the tiddlywiki server picking up the change and updating the file mtime.
+   the update mechanism is overridden in [[https://github.com/whacked/TiddlyWiki5/tree/2015-12_chokidar-with-browser-notify][this tiddlywiki fork]] such that =auto-revert-mode= is no longer necessary. I don't know the larger impact of the workaround.
+
+** file name restrictions for interop
+
+   from experience (and not investigation), tiddler files and tiddler titles should have no spaces in them.
+   TiddlyWiki will convert spaces in titles created through the browser into underscores, but reads the tiddler title from the =title= field in the tiddler headers.
+
+   This causes some trickiness in the org-style links when editing in emacs. It may be possible to use =%20= for spaces in the links. Haven't bothered trying, but mixing plain spaces and underscores /will/ fail.
 
 * executable javascript tiddler
 
