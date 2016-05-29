@@ -168,3 +168,4 @@ type: %s"
 
 
 
+(provide 'tiddlywiki-mode)
