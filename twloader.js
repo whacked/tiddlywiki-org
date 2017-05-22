@@ -7,9 +7,15 @@ function expandUserHome(p) {
     return p.replace(/^~/, process.env.HOME);
 }
 
+// forces no-browser
 function loadTiddlyWiki(wikiPath) {
-	// ref $TiddlyWikiRepoRoot/boot/boot.js
-    var $tw = tiddlywiki.TiddlyWiki();
+	// ref $TiddlyWikiRepoRoot/boot/boot.js at _boot top
+    var $tw0 = require(path.join(tiddlywiki_root,
+                                 "boot", "bootprefix.js")).bootprefix({
+                                     browser: null
+                                 });
+	// ref $TiddlyWikiRepoRoot/boot/boot.js:startup()
+    var $tw = tiddlywiki.TiddlyWiki($tw0);
     $tw.boot.argv = [];
     $tw.boot.wikiPath = expandUserHome(wikiPath);
 
