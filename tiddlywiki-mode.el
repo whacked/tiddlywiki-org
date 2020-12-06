@@ -18,6 +18,14 @@ type: %s"
           title
           tiddlywiki-org-mode-mimetype))
 
+(defun tiddlywiki-create-new-tiddler (file-path title)
+  (find-file-literally file-path)
+  (insert
+   (format
+    "%s\n\n"
+    (tiddlywiki-org-mode-tiddler-preamble title)))
+  (tiddlywiki-mode))
+
 (defun tiddlywiki-parse-tid-file ()
   (interactive)
   (save-excursion
