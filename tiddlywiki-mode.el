@@ -19,6 +19,7 @@ type: %s"
           tiddlywiki-org-mode-mimetype))
 
 (defun tiddlywiki-create-new-tiddler (file-path title)
+  "create a new tiddler with given file path and title"
   (find-file-literally file-path)
   (insert
    (format
@@ -132,6 +133,15 @@ type: %s"
     (setq inhibit-read-only cur-inhibit-read-only)
     (remove-overlays (point-min) (plist-get info :header-end-point))
     (set-buffer-modified-p modified)))
+
+(defun tiddlywiki-create-new-tiddler
+    (path title)
+  "create a new tiddler with given file path and title"
+  (find-file path)
+  (insert
+   (format "%s\n\n"
+           (tiddlywiki-org-mode-tiddler-preamble title)))
+  (tiddlywiki-mode))
 
 (defun tiddlywiki-org-mode-hook ()
   (tiddlywiki-set-header-read-only))
